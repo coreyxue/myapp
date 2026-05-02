@@ -15,12 +15,15 @@ dependencies = [
     "jinja2>=3.1",
     "python-multipart>=0.0.9",
     "pillow>=10.0",
-    "cairosvg>=2.7",
     "reportlab>=4.0",
+    "svglib>=1.5",
 ]
 
 [project.optional-dependencies]
 dev = ["pytest>=8", "pytest-asyncio>=0.23"]
+# Cairo gives sharper raster output but needs the native Cairo library.
+# Skip on Windows unless you have GTK3 Runtime installed.
+cairo = ["cairosvg>=2.7"]
 
 [tool.setuptools.packages.find]
 where = ["."]

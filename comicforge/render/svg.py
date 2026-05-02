@@ -120,7 +120,7 @@ def _render_panel(panel: Panel, W: float, H: float, inset_norm: float, scale: fl
             f'clip-path="url(#{clip_id})" preserveAspectRatio="xMidYMid slice"/>'
         )
     else:
-        parts.append(_placeholder_fill(d, panel))
+        parts.append(_placeholder_fill(d, panel, pts_px, scale, clip_id))
 
     # panel border
     parts.append(f'<path d="{d}" fill="none" stroke="black" stroke-width="{0.6*scale:.2f}"/>')
@@ -143,12 +143,35 @@ def _render_panel(panel: Panel, W: float, H: float, inset_norm: float, scale: fl
     return "".join(parts)
 
 
-def _placeholder_fill(d: str, panel: Panel) -> str:
-    note = panel.notes or ""
-    return (
-        f'<path d="{d}" fill="#fafafa"/>'
-        f'<path d="{d}" fill="url(#hatch)" opacity="0.25"/>'
-    )
+def _placeholder_fill(d: str, panel: Panel, pts_px, scale: float, clip_id: str) -> str:
+    """Solid panel fill plus a small annotation showing the panel's notes.
+
+    The annotation is what tells the artist what to draw in this slot, so
+    it doubles as documentation when reviewing the layout draft.
+    """
+    note = (panel.notes or "").strip()
+    parts = [f'<path d="{d}" fill="#fafafa"/>']
+    if note:
+        xs = [p[0] for p in pts_px]
+        ys = [p[1] for p in pts_px]
+        x1, y1, x2, y2 = min(xs), min(ys), max(xs), max(ys)
+        font_size = max(int(2.2 * scale), 8)
+        char_w = font_size * 0.55
+        max_chars = max(8, int((x2 - x1 - 8 * scale) / char_w))
+        lines = _wrap(note, max_chars)[:6]
+        line_h = int(font_size * 1.2)
+        text_x = x1 + 4 * scale
+        text_y = y1 + 6 * scale + font_size
+        tspans = "".join(
+            f'<tspan x="{text_x:.1f}" dy="{0 if i == 0 else line_h}">{html.escape(line)}</tspan>'
+            for i, line in enumerate(lines)
+        )
+        parts.append(
+            f'<g clip-path="url(#{clip_id})">'
+            f'<text x="{text_x:.1f}" y="{text_y:.1f}" font-family="ui-monospace, Menlo, Consolas, monospace" '
+            f'font-size="{font_size}" fill="#999">{tspans}</text></g>'
+        )
+    return "".join(parts)
 
 
 def _polygon_bbox(points: list[tuple[float, float]]) -> tuple[float, float, float, float]:

@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="zh-cn">
+<head>
+<meta charset="utf-8"/>
+<title>ComicForge — 本地漫画分镜与排版</title>
+<link rel="stylesheet" href="/static/style.css"/>
+</head>
+<body>
+<header>
+  <h1>ComicForge</h1>
+  <div class="controls">
+    <input id="proj-name" placeholder="项目名" value="demo"/>
+    <select id="backend">
+      <option value="ollama">Ollama (本地)</option>
+      <option value="openai">OpenAI 兼容</option>
+      <option value="mock">Mock / 启发式</option>
+    </select>
+    <input id="model" placeholder="模型名" value="qwen2.5:7b-instruct" size="22"/>
+    <button id="btn-build">生成分镜&排版</button>
+    <button id="btn-load">加载</button>
+    <span class="sep"></span>
+    <button data-export="svg">导出 SVG</button>
+    <button data-export="png">PNG</button>
+    <button data-export="pdf">PDF</button>
+    <button data-export="cbz">CBZ</button>
+  </div>
+</header>
+
+<main>
+  <section class="editor">
+    <h2>剧本（Fountain 格式）</h2>
+    <textarea id="script" spellcheck="false" placeholder="Title: ...
+Author: ...
+Reading: rtl
+
+INT. ROOM - NIGHT
+
+YUKI sits at the desk.
+
+YUKI
+你怎么会在这里？
+"></textarea>
+  </section>
+
+  <section class="pages">
+    <h2>页面 <span id="page-count" class="muted"></span></h2>
+    <div id="pages"></div>
+  </section>
+</main>
+
+<script src="/static/app.js"></script>
+</body>
+</html>

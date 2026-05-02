@@ -1,1 +1,14 @@
-./node_modules/*
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.env
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+build/
+dist/
+projects/
+out/
+node_modules/
